@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ProductService} from "../../services/product.service";
-import {IProduct, ServerResponse} from "../../models/IProduct";
+import {ProductModelServer, ServerResponse} from "../../models/IProduct";
 import {Router} from "@angular/router";
 
 
@@ -11,7 +11,7 @@ import {Router} from "@angular/router";
 })
 export class HomeComponent implements OnInit {
 
-  product: IProduct[]=[];
+  product: ProductModelServer[]=[];
 
   constructor(private _productService: ProductService,
               private _router:Router) { }

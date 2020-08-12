@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {environment} from "../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {ServerResponse} from "../models/IProduct";
+import {ProductModelServer, ServerResponse} from "../models/IProduct";
 
 @Injectable({
   providedIn: 'root'
@@ -20,5 +20,13 @@ export class ProductService {
         limit: numberOfResults.toString()
       }
     })
+  }
+  // Get single product From server
+  getSingleProduct(id: number): Observable<ProductModelServer>{
+    return this._http.get<ProductModelServer>( this.baseUrl + '/products' + id);
+  }
+
+  getProductFromCategory(catName:string) : Observable<ProductModelServer[]>{
+    return this._http.get<ProductModelServer[]>(this.baseUrl + '/products/category' + catName)
   }
 }
