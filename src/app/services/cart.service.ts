@@ -212,5 +212,57 @@ export class CartService {
     this.cartDataServer.total = Total;
     this.cartTotal$.next(this.cartDataServer.total);
   }
+  
+  checkoutFromCart(userId: number){
+    this._http.post(this.baseUrl+ '/orders/payment', null)
+      .subscribe((res:{success:boolean}) =>{
+        if(res.success){
+          this.resetServerData(); // reset the server Data.
+          this._http.post(this.baseUrl+'/orders/new', {
+            userId: userId,
+            products: this.cartDataClient.prodData
+          }).subscribe((data:OrderResponse)=>{
+            this._orderService.getSingleOrder(data.order_id).then(prods =>{
+              if(data.success){
+                const navigationExtras: NavigationExtras = {
+                  state: {
+                    message: data.message,
+                    products: prods,
+                    orderId: data.order_id,
+                    total: this.cartDataClient.total
+                  }
+                };
+                //TODO HIDE SPINNER
+                this._router.navigate(['/thankyou'], navigationExtras).then(p=>{
+                  this.cartDataClient = {total:0, prodData: [{inCart:0, id:0}]};
+                  this.cartTotal$.next(0);
+                  localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+                });
+              }
+            });
+          });
+        }
+      });
+  }
 
+  private resetServerData(){
+    this.cartDataServer = {
+      total: 0,
+      data: [{
+        numInCart: 0,
+        product: undefined
+      }]
+    };
+
+    this.cartData$.next({...this.cartDataServer});
+  }
+}
+interface OrderResponse {
+  order_id : number;
+  success : boolean;
+  message : string;
+  products : [{
+    id : string,
+    numInCart: string
+  }];
 }
