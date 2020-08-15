@@ -146,5 +146,64 @@ export class CartService {
     });
   }
 
+  updateCartItems(index: number, increase: boolean){
+    let data = this.cartDataServer.data[index];
 
+    if(increase){
+      data.numInCart < data.product.quantity ? data.numInCart++ : data.product.quantity;
+      this.cartDataClient.prodData[index].inCart = data.numInCart;
+
+      //TODO CALCULATE TOTAL AMOUNT
+      this.cartDataClient.total = this.cartDataServer.total;
+      localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+      this.cartData$.next({... this.cartDataServer});
+    }
+    else {
+      data.numInCart--;
+
+      if(data.numInCart < 1){
+
+        //TODO DELETE THE PRODUCT FROM CART
+        this.cartData$.next({...this.cartDataServer});
+      }
+      else {
+        this.cartData$.next({...this.cartDataServer});
+        this.cartDataClient.prodData[index].inCart = data.numInCart;
+
+        //TODO CALCULATE TOTAL AMOUNT
+        this.cartDataClient.total = this.cartDataServer.total;
+        localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+      }
+    }
+  }
+
+  deleteProductFromCart(index: number){
+    if(window.confirm('Are You sure you want to remove the item?')){
+      this.cartDataServer.data.splice(index, 1);
+      this.cartDataClient.prodData.splice(index, 1);
+
+      //TODO CALCULATE TOTAL AMOUNT
+      this.cartDataClient.total = this.cartDataServer.total;
+
+      if(this.cartDataClient.total == 0){
+        this.cartDataClient = {total:0, prodData:[{inCart:0, id:0}]};
+        localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+      }
+      else{
+        localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+      }
+
+      if(this.cartDataServer.total == 0){
+        this.cartDataServer ={total:0, data:[{numInCart:0, product:undefined}]};
+        this.cartData$.next({... this.cartDataServer});
+      }
+      else{
+        this.cartData$.next({... this.cartDataServer});
+      }
+    }
+    else{
+      //If the user clicks the cancel button
+      return;
+    }
+  }
 }
