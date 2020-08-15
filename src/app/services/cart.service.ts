@@ -7,6 +7,8 @@ import {cartModelPublic, cartModelServer} from "../models/cart.model";
 import {BehaviorSubject} from "rxjs";
 import {NavigationExtras, Router} from "@angular/router";
 import {ProductModelServer} from "../models/IProduct";
+import {ToastrService} from "ngx-toastr";
+import {NgxSpinnerService} from "ngx-spinner";
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +43,9 @@ export class CartService {
   constructor(private _http: HttpClient,
               private _productService: ProductService,
               private _orderService: OrderService,
-              private _router: Router) {
+              private _router: Router,
+              private _toast: ToastrService,
+              private _spinner: NgxSpinnerService) {
     this.cartTotal$.next(this.cartDataServer.total);
     this.cartData$.next(this.cartDataServer);
 
@@ -63,17 +67,19 @@ export class CartService {
               this.cartDataServer.data[0].numInCart = p.inCart;
               this.cartDataServer.data[0].product = actualProductInfo;
 
-              //TODO create calculateTotal Function and replace it here
+              this.calculateTotal() // CALCULATE TOTAL AMOUNT
+
               this.cartDataClient.total = this.cartDataServer.total;
               localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
             } else {
+
               //CartDataServer already has some entry in it.
               this.cartDataServer.data.push({
                 numInCart: p.inCart,
                 product: actualProductInfo
               });
 
-              //TODO create calculateTotal Function and replace it here
+              this.calculateTotal() // CALCULATE TOTAL AMOUNT
               this.cartDataClient.total = this.cartDataServer.total;
               localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
             }
@@ -90,7 +96,8 @@ export class CartService {
       if (this.cartDataServer.data[0].product == undefined) {
         this.cartDataServer.data[0].product = prod;
         this.cartDataServer.data[0].numInCart = quantity != undefined ? quantity : 1;
-        //TODO CALCULATE TOTAL AMOUNT
+
+        this.calculateTotal(); // CALCULATE TOTAL AMOUNT
 
         this.cartDataClient.prodData[0].inCart = this.cartDataServer.data[0].numInCart;
         this.cartDataClient.prodData[0].id = prod.id;
@@ -98,14 +105,21 @@ export class CartService {
         localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
         this.cartData$.next({...this.cartDataServer});
 
-        //TODO DISPLAY A TOAST NOTIFICATION
+        // DISPLAY A TOAST NOTIFICATION FOR PRODUCT ADD TO CART.
+        this._toast.success(`${prod.name} added to the cart`,'Product Added', {
+          timeOut:1500,
+          progressBar:true,
+          progressAnimation: 'increasing',
+          positionClass: 'toast-top-right'
+        });
+
       }
 
-      // 2. if the cart has some items
+      // 2. If the cart has some items
       else {
         let index = this.cartDataServer.data.findIndex(p => p.product.id == prod.id); // -1 or a positive value
 
-        // a. if that item is already in the cart => index is positive value
+        // (A). if that item is already in the cart => index is positive value
         if (index != -1) {
           if (quantity != undefined && quantity <= prod.quantity) {
             this.cartDataServer.data[index].numInCart = this.cartDataServer.data[index].numInCart < prod.quantity ?
@@ -116,11 +130,18 @@ export class CartService {
           }
 
           this.cartDataClient.prodData[index].inCart = this.cartDataServer.data[index].numInCart;
-          //TODO DISPLAY A TOAST NOTIFICATION
+
+          //DISPLAY A TOAST NOTIFICATION for QUANTITY UPDATES.
+          this._toast.info(`${prod.name} quantity updated in the cart`,'Product updated', {
+            timeOut:1500,
+            progressBar:true,
+            progressAnimation: 'increasing',
+            positionClass: 'toast-top-right'
+          });
 
         } //END OF IF
 
-        // b. if that item is not in the cart
+        // (B). If that item is not in the cart
         else {
           this.cartDataServer.data.push({
             numInCart: 1,
@@ -132,9 +153,15 @@ export class CartService {
             id: prod.id
           });
 
-          //TODO DISPLAY A TOAST NOTIFICATION
+          //DISPLAY A TOAST NOTIFICATION FOR PRODUCT ADD TO CART.
+          this._toast.success(`${prod.name} added to the cart`,'Product Added', {
+            timeOut:1500,
+            progressBar:true,
+            progressAnimation: 'increasing',
+            positionClass: 'toast-top-right'
+          });
 
-          //TODO CALCULATE TOTAL AMOUNT
+           this.calculateTotal() // CALCULATE TOTAL AMOUNT
 
           this.cartDataClient.total = this.cartDataServer.total;
           localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
@@ -151,7 +178,8 @@ export class CartService {
       data.numInCart < data.product.quantity ? data.numInCart++ : data.product.quantity;
       this.cartDataClient.prodData[index].inCart = data.numInCart;
 
-      //TODO CALCULATE TOTAL AMOUNT
+      this.calculateTotal()//CALCULATE TOTAL AMOUNT
+
       this.cartDataClient.total = this.cartDataServer.total;
       localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
       this.cartData$.next({...this.cartDataServer});
@@ -160,13 +188,14 @@ export class CartService {
 
       if (data.numInCart < 1) {
 
-        //TODO DELETE THE PRODUCT FROM CART
+        this.deleteProductFromCart(index); //DELETE THE PRODUCT FROM CART
+
         this.cartData$.next({...this.cartDataServer});
       } else {
         this.cartData$.next({...this.cartDataServer});
         this.cartDataClient.prodData[index].inCart = data.numInCart;
 
-        //TODO CALCULATE TOTAL AMOUNT
+        this.calculateTotal()//CALCULATE TOTAL AMOUNT
         this.cartDataClient.total = this.cartDataServer.total;
         localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
       }
@@ -178,7 +207,8 @@ export class CartService {
       this.cartDataServer.data.splice(index, 1);
       this.cartDataClient.prodData.splice(index, 1);
 
-      //TODO CALCULATE TOTAL AMOUNT
+      this.calculateTotal(); // CALCULATE TOTAL AMOUNT
+
       this.cartDataClient.total = this.cartDataServer.total;
 
       if (this.cartDataClient.total == 0) {
@@ -212,8 +242,9 @@ export class CartService {
     this.cartDataServer.total = Total;
     this.cartTotal$.next(this.cartDataServer.total);
   }
-  
+
   checkoutFromCart(userId: number){
+
     this._http.post(this.baseUrl+ '/orders/payment', null)
       .subscribe((res:{success:boolean}) =>{
         if(res.success){
@@ -232,7 +263,9 @@ export class CartService {
                     total: this.cartDataClient.total
                   }
                 };
-                //TODO HIDE SPINNER
+
+                this._spinner.hide(); // HIDE SPINNER
+
                 this._router.navigate(['/thankyou'], navigationExtras).then(p=>{
                   this.cartDataClient = {total:0, prodData: [{inCart:0, id:0}]};
                   this.cartTotal$.next(0);
@@ -240,6 +273,19 @@ export class CartService {
                 });
               }
             });
+          });
+        }
+        else{
+          this._spinner.hide()// HIDE SPINNER
+
+          this._router.navigateByUrl('/checkout').then();
+
+          //DISPLAY A TOAST NOTIFICATION FOR PRODUCT ADD TO CART.
+          this._toast.error(`Sorry, failed to place an order`,'Order Status', {
+            timeOut:1500,
+            progressBar:true,
+            progressAnimation: 'increasing',
+            positionClass: 'toast-top-right'
           });
         }
       });
