@@ -124,13 +124,16 @@ export class CartService {
           if (quantity != undefined && quantity <= prod.quantity) {
             this.cartDataServer.data[index].numInCart = this.cartDataServer.data[index].numInCart < prod.quantity ?
               quantity : prod.quantity;
-          } else {
-            this.cartDataServer.data[index].numInCart = this.cartDataServer.data[index].numInCart < prod.quantity ?
-              this.cartDataServer.data[index].numInCart++ : prod.quantity;
+          }
+          else {
+            this.cartDataServer.data[index].numInCart < prod.quantity ? this.cartDataServer.data[index].numInCart++ :
+              prod.quantity;
           }
 
           this.cartDataClient.prodData[index].inCart = this.cartDataServer.data[index].numInCart;
-
+          this.calculateTotal() // CALCULATE TOTAL AMOUNT
+          this.cartDataClient.total = this.cartDataServer.total;
+          localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
           //DISPLAY A TOAST NOTIFICATION for QUANTITY UPDATES.
           this._toast.info(`${prod.name} quantity updated in the cart`,'Product updated', {
             timeOut:1500,
@@ -139,9 +142,10 @@ export class CartService {
             positionClass: 'toast-top-right'
           });
 
+
         } //END OF IF
 
-        // (B). If that item is not in the cart
+        // (B). If that item is not in the cart Array.
         else {
           this.cartDataServer.data.push({
             numInCart: 1,
@@ -161,7 +165,7 @@ export class CartService {
             positionClass: 'toast-top-right'
           });
 
-           this.calculateTotal() // CALCULATE TOTAL AMOUNT
+          this.calculateTotal() // CALCULATE TOTAL AMOUNT
 
           this.cartDataClient.total = this.cartDataServer.total;
           localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
@@ -266,7 +270,7 @@ export class CartService {
 
                 this._spinner.hide(); // HIDE SPINNER
 
-                this._router.navigate(['/thankyou'], navigationExtras).then(p=>{
+                this._router.navigate(['/thankyou'], navigationExtras).then( p=>{
                   this.cartDataClient = {total:0, prodData: [{inCart:0, id:0}]};
                   this.cartTotal$.next(0);
                   localStorage.setItem('cart', JSON.stringify(this.cartDataClient));

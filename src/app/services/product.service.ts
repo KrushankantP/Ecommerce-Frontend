@@ -15,7 +15,7 @@ export class ProductService {
 
   //This is to fetch all products from the backend server.
   getAllProducts(numberOfResults=10): Observable<ServerResponse>{
-    return this._http.get<ServerResponse>(this.baseUrl +'products', {
+    return this._http.get<ServerResponse>(this.baseUrl +'products/', {
       params:{
         limit: numberOfResults.toString()
       }
@@ -23,10 +23,10 @@ export class ProductService {
   }
   // Get single product From server
   getSingleProduct(id: number): Observable<ProductModelServer>{
-    return this._http.get<ProductModelServer>( this.baseUrl + '/products' + id);
+    return this._http.get<ProductModelServer>( this.baseUrl + '/products/' + id);
   }
 
   getProductFromCategory(catName:string) : Observable<ProductModelServer[]>{
-    return this._http.get<ProductModelServer[]>(this.baseUrl + '/products/category' + catName)
+    return this._http.get<ProductModelServer[]>(this.baseUrl + '/products/category/' + catName)
   }
 }
