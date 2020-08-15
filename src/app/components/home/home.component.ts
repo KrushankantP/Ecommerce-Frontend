@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ProductService} from "../../services/product.service";
 import {ProductModelServer, ServerResponse} from "../../models/IProduct";
 import {Router} from "@angular/router";
+import {CartService} from "../../services/cart.service";
 
 
 @Component({
@@ -14,6 +15,7 @@ export class HomeComponent implements OnInit {
   product: ProductModelServer[]=[];
 
   constructor(private _productService: ProductService,
+              private _cartService: CartService,
               private _router:Router) { }
 
   ngOnInit(): void {
@@ -27,5 +29,9 @@ export class HomeComponent implements OnInit {
 
   selectProduct(id: number) {
     this._router.navigate(['/product', id]).then();
+  }
+
+  addToCart(id: number) {
+    this._cartService.addProductToCart(id);
   }
 }
