@@ -15,7 +15,7 @@ export class OrderService {
 
 
   getSingleOrder(orderId: number){
-    return this._http.get<ProductResponseModel[]>(this.baseUrl + '/orders' + orderId).toPromise();
+    return this._http.get<ProductResponseModel[]>(this.baseUrl + '/orders/' + orderId).toPromise();
   }
 }
 
