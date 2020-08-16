@@ -234,6 +234,16 @@ export class CartService {
     }
   }
 
+  calculateSubTotal(index): Number {
+    let subTotal = 0;
+
+    let p = this.cartDataServer.data[index];
+    // @ts-ignore
+    subTotal = p.product.price * p.numInCart;
+
+    return subTotal;
+  }
+
   private calculateTotal() {
     let Total = 0;
 
