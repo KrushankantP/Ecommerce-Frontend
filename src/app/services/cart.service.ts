@@ -259,11 +259,11 @@ export class CartService {
 
   checkoutFromCart(userId: number){
 
-    this._http.post(this.baseUrl+ '/orders/payment', null)
+    this._http.post(this.baseUrl+ 'orders/payment', null)
       .subscribe((res:{success:boolean}) =>{
         if(res.success){
           this.resetServerData(); // reset the server Data.
-          this._http.post(this.baseUrl+'/orders/new', {
+          this._http.post(this.baseUrl+'orders/new', {
             userId: userId,
             products: this.cartDataClient.prodData
           }).subscribe((data:OrderResponse)=>{
@@ -280,7 +280,7 @@ export class CartService {
 
                 this._spinner.hide(); // HIDE SPINNER
 
-                this._router.navigate(['/thankyou'], navigationExtras).then( p=>{
+                this._router.navigate(['thankyou'], navigationExtras).then( p=>{
                   this.cartDataClient = {total:0, prodData: [{inCart:0, id:0}]};
                   this.cartTotal$.next(0);
                   localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
@@ -292,7 +292,7 @@ export class CartService {
         else{
           this._spinner.hide()// HIDE SPINNER
 
-          this._router.navigateByUrl('/checkout').then();
+          this._router.navigateByUrl('checkout').then();
 
           //DISPLAY A TOAST NOTIFICATION FOR PRODUCT ADD TO CART.
           this._toast.error(`Sorry, failed to place an order`,'Order Status', {
