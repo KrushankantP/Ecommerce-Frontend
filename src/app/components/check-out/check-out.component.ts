@@ -4,6 +4,7 @@ import {OrderService} from "../../services/order.service";
 import {Router} from "@angular/router";
 import {NgxSpinnerService} from "ngx-spinner";
 import {cartModelServer} from "../../models/cart.model";
+import {FormBuilder, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-check-out',
@@ -14,12 +15,22 @@ export class CheckOutComponent implements OnInit {
 
   cartTotal: number;
   cartData: cartModelServer;
-
+  showSpinner: Boolean;
+  checkoutForm: any;
 
   constructor(private _cartService: CartService,
               private _orderService: OrderService,
               private _router: Router,
-              private _spinner: NgxSpinnerService) { }
+              private _spinner: NgxSpinnerService,
+              private _fb: FormBuilder) {
+    this.checkoutForm = this._fb.group({
+      firstname: ['', [Validators.required]],
+      lastname: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required]],
+
+    });
+  }
 
   ngOnInit(): void {
 
