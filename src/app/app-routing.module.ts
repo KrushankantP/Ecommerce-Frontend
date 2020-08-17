@@ -5,6 +5,9 @@ import {ProductComponent} from "./components/product/product.component";
 import {CartComponent} from "./components/cart/cart.component";
 import {ThankyouComponent} from "./components/thankyou/thankyou.component";
 import {CheckOutComponent} from "./components/check-out/check-out.component";
+import {LoginComponent} from "./components/login/login.component";
+import {ProfileComponent} from "./components/profile/profile.component";
+import {ProfileGuard} from "./guard/profile.guard";
 
 
 
@@ -23,7 +26,14 @@ const routes: Routes = [
   },
   {
     path: 'thankyou', component: ThankyouComponent
-  }
+  },
+  {
+    path: 'login', component: LoginComponent
+  },
+  {
+    path: 'profile', component: ProfileComponent, canActivate:[ProfileGuard]
+  },
+
 ];
 
 @NgModule({
