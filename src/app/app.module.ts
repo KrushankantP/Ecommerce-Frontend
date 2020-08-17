@@ -17,6 +17,9 @@ import {ToastrModule} from "ngx-toastr";
 import { LoginComponent } from './components/login/login.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import {FormsModule} from "@angular/forms";
+import {GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule} from "angularx-social-login";
+
+
 
 @NgModule({
   declarations: [
@@ -39,8 +42,25 @@ import {FormsModule} from "@angular/forms";
     NgxSpinnerModule,
     ToastrModule.forRoot(),
     FormsModule,
+    SocialLoginModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              '805314298084-q6a24sk1eumkmc9t0jvame39ccpektva.apps.googleusercontent.com'
+            ),
+          },
+
+        ],
+      } as SocialAuthServiceConfig,
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

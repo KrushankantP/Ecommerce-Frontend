@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/c7c7f8b7-b62d-4878-988c-01ef58e95e7b/resourceGroups/RG01/providers/Microsoft.Web/sites/kkpatel",
+    "appService.deploySubpath": "dist\\ecom-FrontEnd"
+}
