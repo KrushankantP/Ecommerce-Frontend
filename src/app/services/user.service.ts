@@ -13,7 +13,7 @@ export class UserService {
   private baseUrl = environment.baseUrl;
   private user;
 
-  authState$: BehaviorSubject<Boolean> = new BehaviorSubject<boolean>(this.auth);
+  authState$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.auth);
   userData$ = new BehaviorSubject<SocialUser | ResponseModel>(null);
 
   constructor(private _authService: SocialAuthService,
