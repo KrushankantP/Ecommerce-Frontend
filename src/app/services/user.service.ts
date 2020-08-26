@@ -13,10 +13,11 @@ export class UserService {
   auth: boolean = false;
   private baseUrl = environment.baseUrl;
   private user;
-
   authState$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.auth);
   userData$ = new BehaviorSubject<SocialUser | ResponseModel | object>(null);
   loginMessage$ = new BehaviorSubject<string>(null)
+  userRole:number;
+
 
   constructor(private _authService: SocialAuthService,
               private _httpClient: HttpClient) {
@@ -36,12 +37,15 @@ export class UserService {
               }, user.photoUrl, 'social').subscribe(res => {
                 if (res.message === 'Registration successful') {
                   this.auth = true;
+                  this.userRole = 555;
                   this.authState$.next(this.auth); // this will emit the data from the social user
                   this.userData$.next(user);// this will emit the data as ResponseModel.
                 }
               });
             } else {
               this.auth = true;
+              // @ts-ignore
+              this.userRole = res.user.role;
               this.authState$.next(this.auth);
               this.userData$.next(res.user);
             }
@@ -60,6 +64,7 @@ export class UserService {
           this.loginMessage$.next(data);
         } else {
           this.auth = data.auth;
+          this.userRole = data.role;
           this.authState$.next(this.auth);
           this.userData$.next(data);
         }

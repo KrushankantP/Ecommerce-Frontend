@@ -13,6 +13,7 @@ export class LoginComponent implements OnInit {
   email:string
   password:string;
   loginMessage:string;
+  userRole: number;
 
   constructor(private _authService: SocialAuthService,
               private _router: Router,
@@ -22,7 +23,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this._userService.authState$.subscribe(authState=> {
       if(authState){
-        this._router.navigateByUrl(this._route.snapshot.queryParams['returnUrl'] || 'profile');
+        this._router.navigateByUrl(this._route.snapshot.queryParams.returnUrl || 'profile');
       }else{
         this._router.navigateByUrl('login');
       }

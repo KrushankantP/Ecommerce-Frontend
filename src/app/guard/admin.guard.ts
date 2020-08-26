@@ -6,22 +6,26 @@ import {UserService} from "../services/user.service";
 @Injectable({
   providedIn: 'root'
 })
-export class ProfileGuard implements CanActivate {
+export class AdminGuard implements CanActivate {
 
-  constructor(private  _userService: UserService,
+  constructor(private _userService: UserService,
               private _router: Router) {
-
   }
 
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-
-    if(this._userService.auth){
+    if (this._userService.userRole === 777) {
       return true;
+    } else {
+      if (this._userService.auth) {
+        this._router.navigate(['profile']).then();
+      } else {
+        this._router.navigate(['login'], {queryParams: {returnUrl: state.url}}).then();
+      }
+      return false;
     }
-    this._router.navigate(['login'], {queryParams:{returnUrl: state.url}}).then();
-    return false;
+
   }
 
 }
