@@ -20,7 +20,8 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
 
     this._authService.authState.pipe(
-      map((user: SocialUser) => {
+      map((user: SocialUser | ResponseModel) => {
+        if(user instanceof SocialUser || user.type === 'social')
         return {
           ...user,
           email: 'email@gmail.com'

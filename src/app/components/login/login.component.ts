@@ -12,6 +12,7 @@ import {UserService} from "../../services/user.service";
 export class LoginComponent implements OnInit {
   email:string
   password:string;
+  loginMessage:string;
 
   constructor(private _authService: SocialAuthService,
               private _router: Router,
@@ -42,5 +43,11 @@ export class LoginComponent implements OnInit {
    }
     form.reset();
     this._userService.loginUser(email, password);
+    this._userService.loginMessage$.subscribe(msg => {
+      this.loginMessage = msg;
+      setTimeout(() => {
+        this.loginMessage = '';
+      }, 2000);
+    });
   }
 }

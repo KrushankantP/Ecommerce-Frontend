@@ -8,6 +8,7 @@ import {CheckOutComponent} from "./components/check-out/check-out.component";
 import {LoginComponent} from "./components/login/login.component";
 import {ProfileComponent} from "./components/profile/profile.component";
 import {ProfileGuard} from "./guard/profile.guard";
+import {RegisterComponent} from "./components/register/register.component";
 
 
 
@@ -33,6 +34,13 @@ const routes: Routes = [
   {
     path: 'profile', component: ProfileComponent, canActivate:[ProfileGuard]
   },
+  {
+    path: 'register', component: RegisterComponent
+  },
+  {
+    path: '**', pathMatch: 'full', redirectTo: ''
+  }
+
 
 ];
 

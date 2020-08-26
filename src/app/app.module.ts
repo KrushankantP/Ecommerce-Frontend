@@ -16,8 +16,9 @@ import {NgxSpinnerModule} from "ngx-spinner";
 import {ToastrModule} from "ngx-toastr";
 import { LoginComponent } from './components/login/login.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule} from "angularx-social-login";
+import { RegisterComponent } from './components/register/register.component';
 
 
 
@@ -32,7 +33,8 @@ import {GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule} from "a
     ProductComponent,
     ThankyouComponent,
     LoginComponent,
-    ProfileComponent
+    ProfileComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +44,8 @@ import {GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule} from "a
     NgxSpinnerModule,
     ToastrModule.forRoot(),
     FormsModule,
-    SocialLoginModule
+    SocialLoginModule,
+    ReactiveFormsModule,
   ],
   providers: [
     {
