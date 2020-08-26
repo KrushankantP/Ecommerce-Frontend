@@ -4,6 +4,7 @@ import {BehaviorSubject, Observable, of} from "rxjs";
 import {GoogleLoginProvider, SocialAuthService, SocialUser} from "angularx-social-login";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {catchError} from "rxjs/operators";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,8 @@ export class UserService {
 
 
   constructor(private _authService: SocialAuthService,
-              private _httpClient: HttpClient) {
+              private _httpClient: HttpClient,
+              private _router: Router) {
 
     _authService.authState.subscribe((user: SocialUser) => {
       if (user != null) {
@@ -48,6 +50,14 @@ export class UserService {
               this.userRole = res.user.role;
               this.authState$.next(this.auth);
               this.userData$.next(res.user);
+
+              // This code will check and redirect the user to the admin route, assuming it to be http://localhost:4200/admin
+              // Change the url to match the route in your code
+              console.log(this.userRole);
+              if (this.userRole === 777) {
+                this._router.navigateByUrl('admin').then();
+              }
+
             }
           });
       }
@@ -67,7 +77,15 @@ export class UserService {
           this.userRole = data.role;
           this.authState$.next(this.auth);
           this.userData$.next(data);
+
+          // This code will check and redirect the user to the admin route, assuming it to be http://localhost:4200/admin
+          // Change the url to match the route in your code
+          console.log(this.userRole);
+          if (this.userRole === 777) {
+            this._router.navigateByUrl('admin').then();
+          }
         }
+
       })
   }
 

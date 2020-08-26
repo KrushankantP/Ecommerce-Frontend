@@ -20,6 +20,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule} from "angularx-social-login";
 import { RegisterComponent } from '@app/components/register/register.component';
 import { HomeLayoutComponent } from '@app/components/home-layout/home-layout.component';
+import { AdminComponent } from './components/admin/admin.component';
 
 
 
@@ -36,7 +37,8 @@ import { HomeLayoutComponent } from '@app/components/home-layout/home-layout.com
     LoginComponent,
     ProfileComponent,
     RegisterComponent,
-    HomeLayoutComponent
+    HomeLayoutComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,
