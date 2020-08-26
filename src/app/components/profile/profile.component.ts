@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import {SocialAuthService, SocialUser} from "angularx-social-login";
+import {Router} from "@angular/router";
+import {ResponseModel, UserService} from "../../services/user.service";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-profile',
@@ -7,9 +11,49 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProfileComponent implements OnInit {
 
-  constructor() { }
+  myUser: any;
+
+  constructor(private _authService: SocialAuthService,
+              private _router: Router,
+              private _userService: UserService) { }
 
   ngOnInit(): void {
+
+    this._authService.authState.pipe(
+      map((user: SocialUser) => {
+        return {
+          ...user,
+          email: 'email@gmail.com'
+        };
+      })
+    ).subscribe((user:SocialUser)=>{
+      if(user != null){
+        this.myUser = user;
+      }else{
+        return;
+      }
+    });
+
+    this._userService.userData$
+      .pipe(
+        map((user: SocialUser) => {
+          if (user instanceof SocialUser) {
+            return {
+              ...user,
+              email: 'test@test.com'
+            };
+          } else {
+            return user;
+          }
+        })
+      )
+      .subscribe((data: ResponseModel | SocialUser) => {
+        this.myUser = data;
+      });
+  }
+
+  logout() {
+    this._userService.logout();
   }
 
 }
