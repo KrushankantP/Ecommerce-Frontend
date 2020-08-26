@@ -22,7 +22,7 @@ const routes: Routes = [
     path: 'cart', component: CartComponent
   },
   {
-    path: 'checkout', component:CheckOutComponent
+    path: 'checkout', component:CheckOutComponent, canActivate:[ProfileGuard]
   },
   {
     path: 'thankyou', component: ThankyouComponent
